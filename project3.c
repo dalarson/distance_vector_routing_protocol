@@ -457,3 +457,13 @@ void   toLayer2( struct RoutePacket packet ) {
     insertevent(evptr);
 }     // End of toLayer2
 
+/****************************************
+ *  STUDENT CREATED HELPER FUNCTIONS
+ ****************************************/
+
+
+void print_rcvdpkt(struct RoutePacket *rcvdpkt) {
+    printf("Node %d has received a packet from node %d with contents:\n", rcvdpkt -> destid, rcvdpkt -> sourceid);
+    printf("Min cost from node %d to:\n\t%d: %d\n\t%d: %d\n\t%d: %d\n\t%d: %d\n",rcvdpkt->sourceid, 0, rcvdpkt->mincost[0], 1, rcvdpkt->mincost[1], 2, rcvdpkt->mincost[2], 3, rcvdpkt->mincost[3]);
+}
+

@@ -1,22 +1,46 @@
 #include <stdio.h>
+#include <string.h>
 #include "project3.h"
+
+#define NODE_NUM 0
 
 extern int TraceLevel;
 
 struct distance_table {
   int costs[MAX_NODES][MAX_NODES];
-};
-struct distance_table dt0;
-struct NeighborCosts   *neighbor0;
+} dt0;
+struct NeighborCosts *neighbor0;
+
+void printdt0(int MyNodeNumber, struct NeighborCosts *neighbor, struct distance_table *dtptr);
 
 /* students to write the following two routines, and maybe some others */
 
 void rtinit0() {
+    neighbor0 = getNeighborCosts(NODE_NUM);
+
+    // Initialize distance table
+    
+
+
+    int i;
+    for (i = 0; i < MAX_NODES; i++){
+        if (neighbor0 -> NodeCosts[i] != NODE_NUM) { // make sure we aren't sending to self
+
+            // create struct
+            struct RoutePacket pkt = {NODE_NUM, i};
+            memcpy(pkt.mincost, neighbor0 -> NodeCosts, sizeof(int) * MAX_NODES);
+            // send each pkt
+            toLayer2(pkt);
+        }
+    }
+    
+
 
 }
 
 
 void rtupdate0( struct RoutePacket *rcvdpkt ) {
+    printf("Node %d has received a packet.\n", NODE_NUM);
 
 }
 

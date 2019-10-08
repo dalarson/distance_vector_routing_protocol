@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "project3.h"
 
+#define NODE_NUM 2
+
 extern int TraceLevel;
 
 struct distance_table {
@@ -17,7 +19,7 @@ void rtinit2() {
 
 
 void rtupdate2( struct RoutePacket *rcvdpkt ) {
-
+    // print_rcvdpkt(rcvdpkt);
 }
 
 
