@@ -467,3 +467,10 @@ void print_rcvdpkt(struct RoutePacket *rcvdpkt) {
     printf("Min cost from node %d to:\n\t%d: %d\n\t%d: %d\n\t%d: %d\n\t%d: %d\n",rcvdpkt->sourceid, 0, rcvdpkt->mincost[0], 1, rcvdpkt->mincost[1], 2, rcvdpkt->mincost[2], 3, rcvdpkt->mincost[3]);
 }
 
+int min_array(int arr[MAX_NODES]){
+    int i, min = INFINITY;
+    for (i = 0; i < MAX_NODES; i++){
+        if (arr[i] < min) min = arr[i];
+    }
+    return min;
+}

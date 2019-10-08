@@ -11,15 +11,44 @@ struct distance_table {
 struct distance_table dt2;
 struct NeighborCosts   *neighbor2;
 
+void printdt2(int MyNodeNumber, struct NeighborCosts *neighbor, struct distance_table *dtptr);
+
 /* students to write the following two routines, and maybe some others */
 
 void rtinit2() {
+    neighbor2 = getNeighborCosts(NODE_NUM);
 
+    // Initialize distance table
+    int i, j;
+    for (i = 0; i < MAX_NODES; i++){
+        for (j = 0; j < MAX_NODES; j++){
+            dt2.costs[i][j] = INFINITY;
+        }
+    }
+    for (i = 0; i < MAX_NODES; i++){
+        dt2.costs[i][i] = neighbor2->NodeCosts[i];
+    }
+
+    printdt2(NODE_NUM, neighbor2, &dt2);
 }
 
 
 void rtupdate2( struct RoutePacket *rcvdpkt ) {
     // print_rcvdpkt(rcvdpkt);
+    // // update distance table here
+
+    // int i;
+    // for (i = 0; i < MAX_NODES; i++){
+    //     printf("%d\n", neighbor2->NodeCosts[i]);
+    //     // rcvdpkt->mincost[i]; // cost from source ID to i
+    //     // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
+    //     if (rcvdpkt->mincost[i] + neighbor2->NodeCosts[i] < dt2.costs[i][rcvdpkt->sourceid]){ // if given cost is less than current cost
+    //         dt2.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor2->NodeCosts[i]; // set current cost to new cost
+    //     }
+    // }
+    // printdt2(NODE_NUM, neighbor2, &dt2);
+    
+
 }
 
 

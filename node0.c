@@ -19,10 +19,19 @@ void rtinit0() {
     neighbor0 = getNeighborCosts(NODE_NUM);
 
     // Initialize distance table
-    
+    int i, j;
+    for (i = 0; i < MAX_NODES; i++){
+        for (j = 0; j < MAX_NODES; j++){
+            dt0.costs[i][j] = INFINITY; // populate all cells with infinity
+        }
+    }
+    for (i = 0; i < MAX_NODES; i++){
+        dt0.costs[i][i] = neighbor0->NodeCosts[i]; // fill in cells of immediate neighbors
+    }
 
+    // display initialized dt
+    printdt0(NODE_NUM, neighbor0, &dt0);
 
-    int i;
     for (i = 0; i < MAX_NODES; i++){
         if (neighbor0 -> NodeCosts[i] != NODE_NUM) { // make sure we aren't sending to self
 

@@ -11,10 +11,25 @@ struct distance_table {
 struct distance_table dt3;
 struct NeighborCosts   *neighbor3;
 
+void printdt3(int MyNodeNumber, struct NeighborCosts *neighbor, struct distance_table *dtptr);
+
 /* students to write the following two routines, and maybe some others */
 
 void rtinit3() {
+    neighbor3 = getNeighborCosts(NODE_NUM);
 
+    // Initialize distance table
+    int i, j;
+    for (i = 0; i < MAX_NODES; i++){
+        for (j = 0; j < MAX_NODES; j++){
+            dt3.costs[i][j] = INFINITY;
+        }
+    }
+    for (i = 0; i < MAX_NODES; i++){
+        dt3.costs[i][i] = neighbor3->NodeCosts[i];
+    }
+
+    printdt3(NODE_NUM, neighbor3, &dt3);
 }
 
 
