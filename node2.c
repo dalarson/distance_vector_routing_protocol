@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "project3.h"
 
 #define NODE_NUM 2
@@ -30,24 +31,45 @@ void rtinit2() {
     }
 
     printdt2(NODE_NUM, neighbor2, &dt2);
+
+    for (i = 0; i < MAX_NODES; i++){
+        if (i != NODE_NUM && neighbor2->NodeCosts[i] != INFINITY) { // make sure we aren't sending to self
+
+            // create struct
+            struct RoutePacket pkt = {NODE_NUM, i};
+            memcpy(pkt.mincost, neighbor2 -> NodeCosts, sizeof(int) * MAX_NODES);
+            // send each pkt
+            toLayer2(pkt);
+        }
+    }
 }
 
 
 void rtupdate2( struct RoutePacket *rcvdpkt ) {
-    // print_rcvdpkt(rcvdpkt);
-    // // update distance table here
+    print_rcvdpkt(rcvdpkt);
 
-    // int i;
-    // for (i = 0; i < MAX_NODES; i++){
-    //     printf("%d\n", neighbor2->NodeCosts[i]);
-    //     // rcvdpkt->mincost[i]; // cost from source ID to i
-    //     // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
-    //     if (rcvdpkt->mincost[i] + neighbor2->NodeCosts[i] < dt2.costs[i][rcvdpkt->sourceid]){ // if given cost is less than current cost
-    //         dt2.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor2->NodeCosts[i]; // set current cost to new cost
-    //     }
-    // }
-    // printdt2(NODE_NUM, neighbor2, &dt2);
+    // update distance table here
+    int i, j;
+    int has_changed = 0;
+    for (i = 0; i < MAX_NODES; i++){
+
+        // get shortest cost from neighbor
+        // iterate through costs
+        // if cost from that node to dest + cost from me to that node
+
+        // printf("%d\n", neighbor1->NodeCosts[i]);
+        // rcvdpkt->mincost[i]; // cost from source ID to i
+        // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
+        if (rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid] < dt2.costs[i][rcvdpkt->sourceid]){
+            dt2.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid]; // set current cost to new cost
+            if (dt2.costs[i][rcvdpkt->sourceid] == min_array(dt2.costs[i])){
+                has_changed = 1;
+            }
+        }
+    }
+    printf("Has changed? %s\n", has_changed ? "yes" : "no");
     
+    printdt2(NODE_NUM, neighbor2, &dt2);
 
 }
 

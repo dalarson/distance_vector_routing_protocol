@@ -395,7 +395,7 @@ struct NeighborCosts *getNeighborCosts(int myNodeNumber)  {
 //  neighbor rather than to some strange place.
 //////////////////////////////////////////////////////////////////////
 /************************** TOLAYER2 ***************/
-void   toLayer2( struct RoutePacket packet ) {
+void toLayer2( struct RoutePacket packet ) {
     struct RoutePacket *mypktptr;
     struct event *evptr, *q;
     float lastime;

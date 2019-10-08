@@ -33,7 +33,7 @@ void rtinit0() {
     printdt0(NODE_NUM, neighbor0, &dt0);
 
     for (i = 0; i < MAX_NODES; i++){
-        if (neighbor0 -> NodeCosts[i] != NODE_NUM) { // make sure we aren't sending to self
+        if (i != NODE_NUM && neighbor0->NodeCosts[i] != INFINITY) { // make sure we aren't sending to self
 
             // create struct
             struct RoutePacket pkt = {NODE_NUM, i};
@@ -42,15 +42,43 @@ void rtinit0() {
             toLayer2(pkt);
         }
     }
-    
-
-
 }
 
 
 void rtupdate0( struct RoutePacket *rcvdpkt ) {
-    printf("Node %d has received a packet.\n", NODE_NUM);
+    print_rcvdpkt(rcvdpkt);
 
+    // update distance table here
+    int i, j;
+    int has_changed = 0;
+    for (i = 0; i < MAX_NODES; i++){
+        // printf("%d\n", neighbor1->NodeCosts[i]);
+        // rcvdpkt->mincost[i]; // cost from source ID to i
+        // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
+        if (rcvdpkt->mincost[i] + neighbor0->NodeCosts[i] < dt0.costs[i][rcvdpkt->sourceid]){ // if given cost is less than current cost
+            dt0.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor0->NodeCosts[rcvdpkt->sourceid]; // set current cost to new cost
+            if (dt0.costs[i][rcvdpkt->sourceid] == min_array(dt0.costs[i])){
+                has_changed = 1;
+            }
+        }
+    }
+    printf("Has changed? %s\n", has_changed ? "yes" : "no");
+
+    if (has_changed == 1){ // need to transmit new lowest costs
+        for (i = 0; i < MAX_NODES; i++){ // create packets to transmit to neighbors
+            if (i != NODE_NUM && neighbor0->NodeCosts[i] != INFINITY){ // don't send to self or non-connected neighbors
+                struct RoutePacket pkt;
+                pkt.sourceid = NODE_NUM;
+                pkt.destid = i;
+                for (j = 0; j < MAX_NODES; j++){
+                    pkt.mincost[i] = min_array(dt0.costs[i]);
+                }   
+                // toLayer2(pkt);
+            }
+        }
+    }
+
+    printdt0(NODE_NUM, neighbor0, &dt0);
 }
 
 

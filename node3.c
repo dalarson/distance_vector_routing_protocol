@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "project3.h"
 
 #define NODE_NUM 3
@@ -30,11 +31,41 @@ void rtinit3() {
     }
 
     printdt3(NODE_NUM, neighbor3, &dt3);
+
+    for (i = 0; i < MAX_NODES; i++){
+        if (i != NODE_NUM && neighbor3->NodeCosts[i] != INFINITY) { // make sure we aren't sending to self
+
+            // create struct
+            struct RoutePacket pkt = {NODE_NUM, i};
+            memcpy(pkt.mincost, neighbor3 -> NodeCosts, sizeof(int) * MAX_NODES);
+            // send each pkt
+            toLayer2(pkt);
+        }
+    }
 }
 
 
 void rtupdate3( struct RoutePacket *rcvdpkt ) {
-    // print_rcvdpkt(rcvdpkt);
+    print_rcvdpkt(rcvdpkt);
+
+    // update distance table here
+    int i, j;
+    int has_changed = 0;
+    for (i = 0; i < MAX_NODES; i++){
+        // printf("%d\n", neighbor1->NodeCosts[i]);
+        // rcvdpkt->mincost[i]; // cost from source ID to i
+        // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
+        if (rcvdpkt->mincost[i] + neighbor3->NodeCosts[i] < dt3.costs[i][rcvdpkt->sourceid]){ // if given cost is less than current cost
+            dt3.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor3->NodeCosts[rcvdpkt->sourceid]; // set current cost to new cost
+            if (dt3.costs[i][rcvdpkt->sourceid] == min_array(dt3.costs[i])){
+                has_changed = 1;
+            }
+        }
+    }
+    printf("Has changed? %s\n", has_changed ? "yes" : "no");
+
+    printdt3(NODE_NUM, neighbor3, &dt3);
+
 }
 
 
