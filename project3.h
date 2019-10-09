@@ -43,3 +43,4 @@ void                  toLayer2( struct RoutePacket packet );
 struct NeighborCosts *getNeighborCosts(int myNodeNumber);
 void                  print_rcvdpkt(struct RoutePacket *packet);
 int min_array(int arr[MAX_NODES]);
+int min_array_not_dest(int arr[MAX_NODES], int destid);

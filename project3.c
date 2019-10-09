@@ -468,9 +468,25 @@ void print_rcvdpkt(struct RoutePacket *rcvdpkt) {
 }
 
 int min_array(int arr[MAX_NODES]){
-    int i, min = INFINITY;
+    int i;
+    int min = INFINITY;
     for (i = 0; i < MAX_NODES; i++){
-        if (arr[i] < min) min = arr[i];
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    return min;
+}
+
+int min_array_not_dest(int arr[MAX_NODES], int destid){
+    int i;
+    int min = INFINITY;
+    for (i = 0; i < MAX_NODES; i++){
+        if (destid != i){
+            if (arr[i] < min) {
+                min = arr[i];
+            }
+        }
     }
     return min;
 }

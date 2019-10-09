@@ -12,11 +12,15 @@ struct distance_table {
 struct distance_table dt2;
 struct NeighborCosts   *neighbor2;
 
+extern float clocktime;
+
 void printdt2(int MyNodeNumber, struct NeighborCosts *neighbor, struct distance_table *dtptr);
 
 /* students to write the following two routines, and maybe some others */
 
 void rtinit2() {
+    printf("rinit2() called at time %f\n", clocktime);
+
     neighbor2 = getNeighborCosts(NODE_NUM);
 
     // Initialize distance table
@@ -39,6 +43,7 @@ void rtinit2() {
             struct RoutePacket pkt = {NODE_NUM, i};
             memcpy(pkt.mincost, neighbor2 -> NodeCosts, sizeof(int) * MAX_NODES);
             // send each pkt
+            printf("At time t=%f, node %d sends packet to node %d with: %d %d %d %d\n", clocktime, pkt.sourceid, pkt.destid, pkt.mincost[0], pkt.mincost[1], pkt.mincost[2], pkt.mincost[3]);
             toLayer2(pkt);
         }
     }
@@ -47,28 +52,36 @@ void rtinit2() {
 
 void rtupdate2( struct RoutePacket *rcvdpkt ) {
     print_rcvdpkt(rcvdpkt);
-
     // update distance table here
     int i, j;
     int has_changed = 0;
     for (i = 0; i < MAX_NODES; i++){
-
-        // get shortest cost from neighbor
-        // iterate through costs
-        // if cost from that node to dest + cost from me to that node
-
-        // printf("%d\n", neighbor1->NodeCosts[i]);
-        // rcvdpkt->mincost[i]; // cost from source ID to i
-        // dt1.costs[i][rcvdpkt->sourceid] // distance table entry for 1 to i through source id
-        if (rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid] < dt2.costs[i][rcvdpkt->sourceid]){
-            dt2.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid]; // set current cost to new cost
-            if (dt2.costs[i][rcvdpkt->sourceid] == min_array(dt2.costs[i])){
-                has_changed = 1;
+        if (rcvdpkt->sourceid != i){
+            if (rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid] < dt2.costs[i][rcvdpkt->sourceid]){ // if given cost is less than current cost
+                dt2.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + neighbor2->NodeCosts[rcvdpkt->sourceid]; // set current cost to new cost
+                if (dt2.costs[i][rcvdpkt->sourceid] == min_array(dt2.costs[i])){
+                    has_changed = 1;
+                }
             }
         }
     }
-    printf("Has changed? %s\n", has_changed ? "yes" : "no");
-    
+
+    if (has_changed == 1){
+        struct RoutePacket pkt;
+        pkt.sourceid = NODE_NUM;
+        for (i = 0; i < MAX_NODES; i++){
+            pkt.mincost[i] = min_array(dt2.costs[i]);
+        }
+
+        for (i = 0; i < MAX_NODES; i++){
+            if (i != NODE_NUM && neighbor2->NodeCosts[i] != INFINITY){
+                pkt.destid = i;
+                printf("Distance table updated. At time t=%f, node %d sends packet to node %d with: %d %d %d %d\n", clocktime, pkt.sourceid, pkt.destid, pkt.mincost[0], pkt.mincost[1], pkt.mincost[2], pkt.mincost[3]);
+                toLayer2(pkt);
+            }
+        }
+    }
+
     printdt2(NODE_NUM, neighbor2, &dt2);
 
 }
